@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<TestCaseEntity>
+   <description></description>
+   <name>Make Appointment at Hong Kong</name>
+   <tag>regression</tag>
+   <comment></comment>
+   <testCaseGuid>7ec29c29-fd9b-48fc-9a26-1f0ecedd5d17</testCaseGuid>
+</TestCaseEntity>
