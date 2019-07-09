@@ -1,0 +1,73 @@
+def target_type = 'SmokeTest'
+
+pipeline {
+  // https://jenkins.io/doc/book/pipeline/syntax/#options
+	options {
+		buildDiscarder(logRotator(numToKeepStr: '30', artifactNumToKeepStr: '30'))	
+	}
+	 // https://jenkins.io/doc/book/pipeline/syntax/#parameters
+	parameters { 
+    choice(name: 'TEST_TYPE', choices: ['SmokeTest', 'RegressionTest'], description: 'Specify test type to run') 
+  }	 
+
+	agent {
+				docker {
+					label 'docker'
+					image 'katalonstudio/katalon'
+					// TODO: groovy.lang.MissingPropertyException: No such property: workspace for class: WorkflowScript
+					// args "-u root -v \"/workspace/workspace/katalong_project\":/katalon/katalon/source"
+					args "-u root"
+				}
+			}
+	
+	stages {
+	
+		stage('Prepare') {
+		
+			agent {
+				node {
+					label 'ansible' // Execute the Pipeline on an agent available in the Jenkins environment with the provided label
+				}
+			}
+		
+			steps {
+				checkout([$class: 'GitSCM', branches: [[name: "master"]],
+				userRemoteConfigs: [[url: "git@github.com:ideagen-hosang/katalon-example.git"]]])
+				
+				stash name: 'katalon-project-source', includes: '*/**'
+			}
+		}
+        
+        
+    stage('Run Katalon Test') {	
+        steps {
+  
+          // The Declarative model for Jenkins Pipelines has a restricted subset of syntax that it allows in the stage { ... } block
+          // Can bypass that restriction by wrapping the steps in a script { ... } block, but as a result, loosing validation of syntax
+          script {    
+            if (env.TEST_TYPE) {
+              target_type = "${env.TEST_TYPE}"
+            } 
+          }		  			  
+			 
+          unstash "katalon-project-source"
+            sh "katalon-execute.sh -browserType='Chrome' -retry=0 -statusDelay=15 -testSuitePath='Test Suites/${target_type}' -apiKey=f82b96b8-dd8b-470a-a31e-494c0a59d305"
+          }
+		}
+
+		stage('Collect Reports') {
+			
+			steps {			    
+				archiveArtifacts artifacts: 'report/**/*.*', fingerprint: true
+				junit 'report/**/JUnit_Report.xml'
+      }
+    }
+  }
+	
+	post {
+    always {
+      cleanWs()
+    }
+  }
+    
+}
