@@ -55,19 +55,21 @@ pipeline {
           }
 		}
 
-		stage('Collect Reports') {
+		// stage('Collect Reports') {
 			
-			steps {			    
-				archiveArtifacts artifacts: 'report/**/*.*', fingerprint: true
-				junit 'report/**/JUnit_Report.xml'
-      }
-    }
-  }
+		// 	steps {			    
+		// 		archiveArtifacts artifacts: 'report/**/*.*', fingerprint: true
+		// 		junit 'report/**/JUnit_Report.xml'
+      	// 	}
+    	// }
+  	}
 	
 	post {
-    always {
-      cleanWs()
-    }
-  }
+		always {
+			archiveArtifacts artifacts: 'report/**/*.*', fingerprint: true
+			junit 'report/**/JUnit_Report.xml'
+			cleanWs()
+		}
+  	}
     
 }
