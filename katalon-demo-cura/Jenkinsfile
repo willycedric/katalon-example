@@ -12,7 +12,7 @@ pipeline {
 
 	agent {
 				docker {
-					label 'docker generic'
+					label 'docker'
 					image 'katalonstudio/katalon'
 					// TODO: groovy.lang.MissingPropertyException: No such property: workspace for class: WorkflowScript
 					// args "-u root -v \"/workspace/workspace/katalong_project\":/katalon/katalon/source"
