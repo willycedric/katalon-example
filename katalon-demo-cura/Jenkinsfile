@@ -12,7 +12,7 @@ pipeline {
 
 	agent {
 				docker {
-					label 'docker'
+					label 'katalon'
 					image 'katalonstudio/katalon'
 					// TODO: groovy.lang.MissingPropertyException: No such property: workspace for class: WorkflowScript
 					// args "-u root -v \"/workspace/workspace/katalong_project\":/katalon/katalon/source"
@@ -26,7 +26,7 @@ pipeline {
 		
 			agent {
 				node {
-					label 'ansible' // Execute the Pipeline on an agent available in the Jenkins environment with the provided label
+					label 'master' // Execute the Pipeline on an agent available in the Jenkins environment with the provided label
 				}
 			}
 		
