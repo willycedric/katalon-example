@@ -32,7 +32,7 @@ pipeline {
 		
 			steps {
 				checkout([$class: 'GitSCM', branches: [[name: "master"]],
-				userRemoteConfigs: [[url: "git@github.com:ideagen-hosang/katalon-example.git"]]])
+				userRemoteConfigs: [[credentialsId: "slave",url: "git@github.com:ideagen-hosang/katalon-example.git"]]])
 				
 				stash name: 'katalon-project-source', includes: '*/**'
 			}
